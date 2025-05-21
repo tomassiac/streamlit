@@ -243,7 +243,7 @@ col_title.markdown("El modelo usado es un Random Forest entrenado con datos de j
 
 with st.expander("Estado de entrenamiento y métricas....más", expanded=False):
     st.markdown("<span style='font-size:18px;'>- LSTM (juveniles): entrenada</span>", unsafe_allow_html=True)
-    st.markdown("<span style='font-size:18px;'>- Random Forest (riesgo HO): entrenado</span>", unsafe_allow_html=True)
+    st.markdown("<span style='font-size:18px;'>- Random Forest (riesgo ho): entrenado</span>", unsafe_allow_html=True)
 
     # Reporte de métricas LSTM
     from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
@@ -255,7 +255,7 @@ with st.expander("Estado de entrenamiento y métricas....más", expanded=False):
 
     pred_LSTM, true_LSTM, mae_LSTM, rmse_LSTM, r2_LSTM, mape_LSTM, rmspe_LSTM = generar_metricas(model_lstm, X_te, y_te, scaler, variable_exogena)
 
-    st.markdown("<span style='font-size:16px;'><b>Métricas LSTM (test)</b></span>", unsafe_allow_html=True)
+    st.markdown("<span style='font-size:14px;'><b>Métricas LSTM (test)</b></span>", unsafe_allow_html=True)
     st.write(f"MAE: {mae_LSTM:.2f}")
     st.write(f"RMSE: {rmse_LSTM:.2f}")
     st.write(f"R2: {r2_LSTM:.2f}")
@@ -276,7 +276,7 @@ with st.expander("Estado de entrenamiento y métricas....más", expanded=False):
 
     report = classification_report(y_tef, rf_pred, output_dict=True, zero_division=0)
     df_report = pd.DataFrame(report).T
-    st.markdown("<span style='font-size:16px;'><b>Métricas Random Forest (test)</b></span>", unsafe_allow_html=True)
+    st.markdown("<span style='font-size:14px;'><b>Métricas Random Forest (test)</b></span>", unsafe_allow_html=True)
     st.dataframe(df_report.style.format({
         "precision": "{:.2f}",
         "recall":    "{:.2f}",
@@ -294,19 +294,24 @@ st.header("Clasificación interactiva")
 temp        = st.number_input("Temperatura (°C)", 
     value = float(df["temperatura(°c)_mean"].median()),
     min_value=df["temperatura(°c)_mean"].min(),
-    max_value=df["temperatura(°c)_mean"].max() + 5)
+    max_value=df["temperatura(°c)_mean"].max(),
+    help=f"Rango permitido: {df['temperatura(°c)_mean'].min():.2f} a {df['temperatura(°c)_mean'].max():.2f} °C"
+)
 sal         = st.number_input("Salinidad (ppt)",  
     value = float(df["salinidad(ppt)_mean"].median()),
     min_value=df["salinidad(ppt)_mean"].min(), 
-    max_value=df["salinidad(ppt)_mean"].max() + 10)
+    max_value=df["salinidad(ppt)_mean"].max(),
+    help=f"Rango permitido: {df['salinidad(ppt)_mean'].min():.2f} a {df['salinidad(ppt)_mean'].max():.2f} ppt"
+)
 juvenile_t1 = st.number_input(
     "Juvenil t-1",
     value=float(df["juvenil"].median()),
     min_value=0.0,
-    max_value=float(df["juvenil"].max()) * 10
+    max_value=float(15) * 10,
+    help=f"Rango permitido: 0.00 a {15:.2f}"
 )
-semana      = st.selectbox("Semana", semana_cols)
-tipo        = st.selectbox("Tipo de Tratamiento", tipo_cols)
+semana      = st.selectbox("Semana", semana_cols, help="Selecciona la semana para la predicción.")
+tipo        = st.selectbox("Tipo de Tratamiento", tipo_cols, help="Selecciona el tipo de tratamiento.")
 
 # Ajuste: usar solo un scaler para todo
 scaler_full = MinMaxScaler().fit(df[cols_lstm])

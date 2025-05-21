@@ -9,4 +9,4 @@ statsmodels==0.14.4
 streamlit==1.45.1
 
 # TensorFlow “estable” en Linux/Windows
-tensorflow==2.19.0;
+tensorflow==2.19.0
