@@ -46,11 +46,12 @@ st.set_page_config(page_title="Caligus Risk Dashboard", layout="wide")
 # 1️⃣ Carga de datos
 # ────────────────────────────────────────────────────────────────
 uploaded = st.file_uploader(
-    "Sube CSV con columnas: ho, juvenil, temperatura(°c)_mean, salinidad(ppt)_mean, tipo_*, semana_*",
+    "Sube CSV con columnas: ho, juvenil, temperatura(°c)_mean, salinidad(ppt)_mean, tipo_*, semana_*, con nombre: data_streamlit.csv",
     type="csv",
 )
 if not uploaded:
     st.stop()
+
 df = pd.read_csv(uploaded)
 
 # ────────────────────────────────────────────────────────────────
@@ -225,15 +226,13 @@ clf_rf.fit(X_trf, y_trf)
 # ────────────────────────────────────────────────────────────────
 # 6️⃣ Cabecera con logo + título
 # ────────────────────────────────────────────────────────────────
-col_img, col_title = st.columns([1, 9])
-try:
-    logo = Image.open("caligus.jpeg")
-    col_img.image(logo, width=80)
-except:
-    pass
-col_title.title("Predicción Juvenil + Clasificación de Riesgo ho")
-col_title.markdown("Entrena modelos y clasifica el nivel de riesgo operativo de Caligus")
-col_title.markdown("El modelo usado es un Random Forest entrenado con datos de juveniles y condiciones ambientales")
+col_img, col_title = st.columns([2, 10])
+with col_img:
+    st.image("./caligus3D.png", width=200)
+with col_title:
+    st.markdown("<h1 style='margin-top:0;'>Predicción Juvenil + Clasificación de Riesgo ho</h1>", unsafe_allow_html=True)
+    st.markdown("Entrena modelos y clasifica el nivel de riesgo operativo de Caligus")
+    st.markdown("El modelo usado es un Random Forest entrenado con datos de juveniles y condiciones ambientales")
 
 # ────────────────────────────────────────────────────────────────
 # 7️⃣ Estado de entrenamiento
